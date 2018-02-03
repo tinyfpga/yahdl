@@ -25,6 +25,10 @@ The core language borrows heavily from both Verilog and C++.  Most Verilog conce
 #### Arrays
 #### Classes
 
+### Structural Elements
+#### Modules
+#### Nets
+
 ### Operators
 #### Select
 #### Postfix Increment and Decrement  
