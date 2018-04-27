@@ -11,20 +11,20 @@ module uart <
     output logic tx,
     input  logic rx
 ) {
-    tx_buffer_t tx_buffer;
-    rx_buffer_t rx_buffer;
+    private tx_buffer_t tx_buffer;
+    private rx_buffer_t rx_buffer;
     
-    const time bit_length = 1s / baud_rate;
+    private const time bit_length = 1s / baud_rate;
     
-    function void write(uint8_t data) {
+    public void write(uint8_t data) {
         tx_buffer.put(data);
     }
     
-    function uint8_t read() {
+    public uint8_t read() {
         return rx_buffer.get();
     }
     
-    function bool has_data() {
+    public bool has_data() {
         return !rx_buffer.is_empty();
     }
     
