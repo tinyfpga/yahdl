@@ -1,0 +1,11 @@
+/**
+ * Base memory access interface.  
+ */
+interface mem <
+    type address_t
+    type data_t
+> {
+    public data_t read(address_t address);
+    
+    public void write(address_t address, data_t data);
+}
