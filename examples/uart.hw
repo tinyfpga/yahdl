@@ -1,0 +1,68 @@
+/**
+ * Simple UART module to explore basic HW concepts.
+ */
+module uart <
+    type tx_buffer_t implements fifo,
+    type rx_buffer_t implements fifo,
+    uint32_t baud_rate
+> (
+    output logic tx,
+    input  logic rx
+) {
+    tx_buffer_t tx_buffer;
+    rx_buffer_t rx_buffer;
+    
+    const time bit_length = 1s / baud_rate;
+    
+    function void write(uint8_t data) {
+        tx_buffer.put(data);
+    }
+    
+    function uint8_t read() {
+        return rx_buffer.get();
+    }
+    
+    function bool has_data() {
+        return !rx_buffer.is_empty();
+    }
+    
+    thread tx_data {
+        while (1) {
+            uint8_t tx_data = tx_buffer.get();
+            
+            // start bit
+            tx = 1;
+            wait bit_length;
+            
+            // send data
+            for (uint8_t i = 0; i < 8; i++) {
+                tx = data[i];
+                wait bit_length;
+            }
+            
+            // stop bit
+            tx = 0;
+            wait bit_length;
+        }
+    }
+    
+    thread rx_data {
+        while (1) {
+            // wait for start bit
+            wait until rx = 1;
+            wait bit_length * 1.5;
+            
+            // shift in data
+            uint8_t data = 0;
+            for (uint8_t i = 0; i < 8; i++) {
+                data[i] = rx;
+                wait bit_length;
+            }
+            
+            // stop bit
+            wait bit_length;
+            
+            rx_buffer.put(data);
+        }
+    }
+}
