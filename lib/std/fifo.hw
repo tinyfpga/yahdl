@@ -1,0 +1,15 @@
+interface fifo <
+    type T
+> {
+    /// Removes and returns next item.  Blocks until something is available.
+    public T get();
+    
+    /// Returns true if an item is available.
+    public bool can_get();
+    
+    /// Inserts an item into the fifo.  Blocks until space is available.
+    public void put(T item);
+    
+    /// Returns true if space is available.
+    public bool can_put();
+}
