@@ -19,7 +19,11 @@ The core language borrows heavily from both Verilog and C++.  Most Verilog conce
 
 ## Language Design
 
+
+### Packages
+
 ### Data Types
+#### Time
 #### Literals
 #### Logic Vectors
 #### Arrays
