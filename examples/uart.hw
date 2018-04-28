@@ -1,32 +1,17 @@
 import std.fifo;
 
 /**
- * Simple UART module to explore basic HW concepts.
+ * UART transmit module.
  */
-module uart <
-    type tx_buffer_t implements fifo<uint8_t>,
-    type rx_buffer_t implements fifo<uint8_t>,
-    uint32_t baud_rate
+module uart_tx <
+    uint32_t baud_rate,
+    uint32_t num_data_bits = 8,
+    uint32_t num_stop_bits = 1
 > (
-    output logic tx,
-    input  logic rx
+    fifo<uint8_t> tx_buffer,
+    output logic tx
 ) {
-    private tx_buffer_t tx_buffer;
-    private rx_buffer_t rx_buffer;
-    
     private const time bit_length = 1s / baud_rate;
-    
-    public void write(uint8_t data) {
-        tx_buffer.put(data);
-    }
-    
-    public uint8_t read() {
-        return rx_buffer.get();
-    }
-    
-    public bool has_data() {
-        return !rx_buffer.is_empty();
-    }
     
     thread tx_data {
         while (1) {
@@ -37,16 +22,30 @@ module uart <
             wait bit_length;
             
             // send data
-            for (uint8_t i = 0; i < 8; i++) {
+            for (uint8_t i = 0; i < num_data_bits; i++) {
                 tx = data[i];
                 wait bit_length;
             }
             
             // stop bit
             tx = 0;
-            wait bit_length;
+            wait bit_length * num_stop_bits;
         }
     }
+}
+
+/**
+ * UART receive module.
+ */
+module uart_rx <
+    uint32_t baud_rate,
+    uint32_t num_data_bits = 8,
+    uint32_t num_stop_bits = 1
+> (
+    fifo<uint8_t> rx_buffer,
+    input  logic rx
+) {
+    private const time bit_length = 1s / baud_rate;
     
     thread rx_data {
         while (1) {
@@ -56,15 +55,47 @@ module uart <
             
             // shift in data
             uint8_t data = 0;
-            for (uint8_t i = 0; i < 8; i++) {
+            for (uint8_t i = 0; i < num_data_bits; i++) {
                 data[i] = rx;
                 wait bit_length;
             }
             
-            // stop bit
-            wait bit_length;
+            // stop bit(s)
+            wait bit_length * num_stop_bits;
             
             rx_buffer.put(data);
         }
+    }
+}
+
+/**
+ * Simple UART module to explore basic HW concepts.
+ */
+module uart <
+    type tx_buffer_t implements fifo<uint8_t>,
+    type rx_buffer_t implements fifo<uint8_t>,
+    uint32_t baud_rate,
+    uint32_t num_data_bits = 8,
+    uint32_t num_stop_bits = 1
+> (
+    output logic tx,
+    input  logic rx
+) {
+    private tx_buffer_t tx_buffer;
+    private rx_buffer_t rx_buffer;
+    
+    uart_tx tx_path <baud_rate, num_data_bits, parity_bit, num_stop_bits> (tx_buffer, tx);
+    uart_rx rx_path <baud_rate, num_data_bits, parity_bit, num_stop_bits> (rx_buffer, rx);
+    
+    public void write(uint8_t data) {
+        tx_buffer.put(data);
+    }
+    
+    public uint8_t read() {
+        return rx_buffer.get();
+    }
+    
+    public bool has_data() {
+        return rx_buffer.can_get();
     }
 }
