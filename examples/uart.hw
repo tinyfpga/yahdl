@@ -1,4 +1,4 @@
-import std.fifo;
+import hw.lang.queue;
 
 /**
  * UART transmit module.
@@ -8,7 +8,7 @@ module uart_tx <
     uint32_t num_data_bits = 8,
     uint32_t num_stop_bits = 1
 > (
-    fifo<uint8_t> tx_buffer,
+    queue<uint8_t> tx_buffer,
     output logic tx
 ) {
     private const time bit_length = 1s / baud_rate;
@@ -42,7 +42,7 @@ module uart_rx <
     uint32_t num_data_bits = 8,
     uint32_t num_stop_bits = 1
 > (
-    fifo<uint8_t> rx_buffer,
+    queue<uint8_t> rx_buffer,
     input  logic rx
 ) {
     private const time bit_length = 1s / baud_rate;
@@ -72,8 +72,8 @@ module uart_rx <
  * Simple UART module to explore basic HW concepts.
  */
 module uart <
-    type tx_buffer_t implements fifo<uint8_t>,
-    type rx_buffer_t implements fifo<uint8_t>,
+    type tx_buffer_t implements queue<uint8_t>,
+    type rx_buffer_t implements queue<uint8_t>,
     uint32_t baud_rate,
     uint32_t num_data_bits = 8,
     uint32_t num_stop_bits = 1
@@ -96,6 +96,6 @@ module uart <
     }
     
     public bool has_data() {
-        return rx_buffer.can_get();
+        return rx_buffer.has_item();
     }
 }
