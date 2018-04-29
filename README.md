@@ -87,21 +87,34 @@ location they are instantiated.
 Starting at the top module going down the hierarchy, parameter and constant
 expressions are evaluated and propagated.
 
+### Expression Simplification
+Expressions are simplified.
+
 ### Control Graph Extraction
 The control flow for each method and thread is extracted.  Assignments and
 expressions are included in
 
 ### Datapath Graph Extraction
 The data flow from each control graph is extracted with signals connecting
-the control graph to the data graph control points.
+the control graph to the data graph control points.  Temporary storage and muxes
+are added as necessary.
 
 ### Dead Code Elimination
 Dead code is pruned from the control graph and data graph based on expressions
 known at compile-time.  
 
+### Simple State Fusion
+Combine independent and trivially dependent statement nodes into a single node.
+Trivially dependent statements are dependent assignment expressions comprised of
+a small number of logical functions, unlimited constant bitslicing, unlimited
+constant shifts, and variable references.
+
 ### Call Graph Generation
 Beginning from each always block and thread, a directed graph is generated that
 describes every location that every function is called from.
+
+### Trivial Function Inline
+Trival getter and setter functions are inlined.
 
 ### Arbiter Insertion
 Arbiters are inserted for functions that are called from more than one thread
@@ -109,9 +122,20 @@ and for module fields that are updated from more than one always block or
 thread.
 
 ### Control and Datapath Graph Optimization
-#### Loop Unrolling
-#### Function Inline
-#### Simple State Fusion
-#### Complex State Fusion
+When implementing the design, there are many implementation decisions to be
+made along the way.  Simple decisions like whether a function should be inlined
+or not can make a big difference in performance and resource utilization.
+
+Optimization stages must implement three features:
+1. Identify locations to perform the optimization.
+2. Heuristics to get cheap decisions on whether the optimization should be
+performed when it is obvious what to do.
+2. Perform the optimization.
+
+Possible implementation optimizations:
+- Loop Unrolling
+- Function Inline
+- Complex State Fusion
+
 ### Verilog Output
-####
+Output the design in human-readable and synthesizable verilog.
