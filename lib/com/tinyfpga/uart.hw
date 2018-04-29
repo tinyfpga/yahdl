@@ -1,35 +1,37 @@
+package com.tinyfpga;
+
 import hw.lang.queue;
 
 /**
  * UART transmit module.
  */
-module uart_tx <
+public module uart_tx <
     uint32_t baud_rate,
     uint32_t num_data_bits = 8,
     uint32_t num_stop_bits = 1
 > (
-    queue<uint8_t> tx_buffer,
+    ref queue<uint8_t> tx_buffer,
     output logic tx
 ) {
-    private const time bit_length = 1s / baud_rate;
-    
+    private const time bit_length_time = 1s / baud_rate;
+
     thread tx_data {
         while (1) {
             uint8_t tx_data = tx_buffer.get();
-            
+
             // start bit
             tx = 1;
-            wait bit_length;
-            
+            wait bit_length_time;
+
             // send data
             for (uint8_t i = 0; i < num_data_bits; i++) {
                 tx = data[i];
-                wait bit_length;
+                wait bit_length_time;
             }
-            
+
             // stop bit
             tx = 0;
-            wait bit_length * num_stop_bits;
+            wait bit_length_time * num_stop_bits;
         }
     }
 }
@@ -37,32 +39,32 @@ module uart_tx <
 /**
  * UART receive module.
  */
-module uart_rx <
+public module uart_rx <
     uint32_t baud_rate,
     uint32_t num_data_bits = 8,
     uint32_t num_stop_bits = 1
 > (
-    queue<uint8_t> rx_buffer,
+    ref queue<uint8_t> rx_buffer,
     input  logic rx
 ) {
-    private const time bit_length = 1s / baud_rate;
-    
+    private const time bit_length_time = 1s / baud_rate;
+
     thread rx_data {
         while (1) {
             // wait for start bit
-            wait until rx = 1;
-            wait bit_length * 1.5;
-            
+            wait until rx == 1;
+            wait bit_length_time * 1.5;
+
             // shift in data
             uint8_t data = 0;
             for (uint8_t i = 0; i < num_data_bits; i++) {
                 data[i] = rx;
-                wait bit_length;
+                wait bit_length_time;
             }
-            
+
             // stop bit(s)
-            wait bit_length * num_stop_bits;
-            
+            wait bit_length_time * num_stop_bits;
+
             rx_buffer.put(data);
         }
     }
@@ -71,7 +73,7 @@ module uart_rx <
 /**
  * Simple UART module to explore basic HW concepts.
  */
-module uart <
+public module uart <
     type tx_buffer_t implements queue<uint8_t>,
     type rx_buffer_t implements queue<uint8_t>,
     uint32_t baud_rate,
@@ -83,18 +85,18 @@ module uart <
 ) {
     private tx_buffer_t tx_buffer;
     private rx_buffer_t rx_buffer;
-    
-    uart_tx tx_path <baud_rate, num_data_bits, parity_bit, num_stop_bits> (tx_buffer, tx);
-    uart_rx rx_path <baud_rate, num_data_bits, parity_bit, num_stop_bits> (rx_buffer, rx);
-    
+
+    private uart_tx tx_path <baud_rate, num_data_bits, parity_bit, num_stop_bits> (tx_buffer, tx);
+    private uart_rx rx_path <baud_rate, num_data_bits, parity_bit, num_stop_bits> (rx_buffer, rx);
+
     public void write(uint8_t data) {
         tx_buffer.put(data);
     }
-    
+
     public uint8_t read() {
         return rx_buffer.get();
     }
-    
+
     public bool has_data() {
         return rx_buffer.has_item();
     }

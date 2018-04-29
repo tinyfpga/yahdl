@@ -1,3 +1,5 @@
+package hw.lang;
+
 /**
  * Standard queue interface.  Follows strict first-in, first-out ordering.
  */
@@ -6,13 +8,13 @@ interface queue <
 > {
     /// Removes and returns next item.  Blocks until something is available.
     public T get();
-    
+
     /// Returns true if an item is available.
     public bool has_item();
-    
+
     /// Inserts an item into the fifo.  Blocks until space is available.
     public void put(T item);
-    
+
     /// Returns true if space is available.
     public bool has_space();
 }
@@ -25,10 +27,10 @@ module circular_buffer <type T, uint32_t capacity> implements queue<T> {
 
     public T get() {
         wait until has_item();
-        
+
         T value = data[get_ptr];
         size = size - 1;
-        get_ptr = (get_ptr + 1) % capacity;            
+        get_ptr = (get_ptr + 1) % capacity;
         return value;
     }
 
@@ -38,7 +40,7 @@ module circular_buffer <type T, uint32_t capacity> implements queue<T> {
 
     public void put(T item) {
         wait until has_space();
-        
+
         data[put_ptr] = item;
         put_ptr = (put_ptr + 1) % capacity;
         size = size + 1;

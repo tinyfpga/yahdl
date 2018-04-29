@@ -1,0 +1,101 @@
+package com.tinyfpga;
+
+/**
+ * Memory-mapped SPI interface.
+ */
+module mmspi <
+  type address_t,
+  type data_t,
+  uint8_t wake_cmd = 0xAB,
+  uint8_t read_cmd = 0xEB,
+> (
+  input           logic clk,
+  output          logic spi_clk,
+  output          logic spi_cs,
+  inout   [3:0]   logic spi_io,
+) {
+  private void single_out(uint8_t value) {
+    for (uint8_t i = 7; i >= 0; i--) {
+      spi_io[0] = value[i];
+      spi_clk = 0;
+      wait until posedge clk;
+
+      spi_clk = 1;
+      wait until posedge clk;
+    }
+  }
+
+  private uint8_t single_in() {
+    uint8_t value;
+
+    for (uint8_t i = 7; i >= 0; i--) {
+      spi_clk = 0;
+      wait until posedge clk;
+
+      value[i] = spi_io[1];
+      spi_clk = 1;
+      wait until posedge clk;
+    }
+
+    return value;
+  }
+
+  private void quad_out(uint8_t value) {
+    spi_io = value[7:4];
+    spi_clk = 0;
+    wait until posedge clk;
+
+    spi_clk = 1;
+    wait until posedge clk;
+
+    spi_io = value[3:0];
+    spi_clk = 0;
+    wait until posedge clk;
+
+    spi_clk = 1;
+    wait until posedge clk;
+  }
+
+  private uint8_t quad_in() {
+    uint8_t value;
+
+    spi_clk = 0;
+    wait until posedge clk;
+
+    value[7:4] = spi_io;
+    spi_clk = 1;
+    wait until posedge clk;
+
+    spi_clk = 0;
+    wait until posedge clk;
+
+    value[3:0] = spi_io;
+    spi_clk = 1;
+    wait until posedge clk;
+
+    return value;
+  }
+
+  public data_t read(address_t address) {
+    data_t read_data;
+
+    spi_cs = 0;
+
+    single_out(read_cmd);
+    quad_out(address[23:16]);
+    quad_out(address[15:8]);
+    quad_out(address[7:0]);
+    quad_out(0x00); // mode
+    quad_in(); // dummy byte 0
+    quad_in(); // dummy byte 1
+
+    for (uint8_t i = 0; i < width(data_t); i += 8) {
+      read_data[i +: 8] = quad_in();
+    }
+
+    spi_cs = 1;
+
+    return read_data;
+  }
+
+}

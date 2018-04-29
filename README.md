@@ -66,9 +66,52 @@ The core language borrows heavily from both Verilog and C++.  Most Verilog conce
 
 ## Compiler Design
 ### Parser
-### Abstract Syntax Tree
-### Symbol Table Generation
-### Symbol Resolution
-### Control and Datapath Generation
-### Verilog Output
+Tokenize and parse the design files into concrete syntax trees.
 
+### Abstract Syntax Tree Generation
+Convert the concrete syntax trees into abstract syntax trees.  An AST
+(abstract syntax tree) is more suitable for further processing.
+
+### Symbol Table Generation
+The symbol table for each scope is generated.  The complete symbol table is
+actually a tree of tables where each node represents a scope.
+
+### Symbol Resolution
+Every reference to a symbol is resolved to the definition of that symbol.
+
+### Elaboration
+Starting at the top module going down the hierarchy, modules are copied to each
+location they are instantiated.
+
+### Constant and Parameter Propagation and Evaluation
+Starting at the top module going down the hierarchy, parameter and constant
+expressions are evaluated and propagated.
+
+### Control Graph Extraction
+The control flow for each method and thread is extracted.  Assignments and
+expressions are included in
+
+### Datapath Graph Extraction
+The data flow from each control graph is extracted with signals connecting
+the control graph to the data graph control points.
+
+### Dead Code Elimination
+Dead code is pruned from the control graph and data graph based on expressions
+known at compile-time.  
+
+### Call Graph Generation
+Beginning from each always block and thread, a directed graph is generated that
+describes every location that every function is called from.
+
+### Arbiter Insertion
+Arbiters are inserted for functions that are called from more than one thread
+and for module fields that are updated from more than one always block or
+thread.
+
+### Control and Datapath Graph Optimization
+#### Loop Unrolling
+#### Function Inline
+#### Simple State Fusion
+#### Complex State Fusion
+### Verilog Output
+####

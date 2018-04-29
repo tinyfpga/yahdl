@@ -1,0 +1,58 @@
+
+interface test_interface {
+  public void reset();
+
+  public uint8_t get();
+
+  public void set(uint8_t new_value);
+
+  public uint8_t get(uint8_t new_value);
+}
+
+module test_module_functions implements test_interface {
+  private uint8_t value;
+
+  public void reset() {
+    value = 0;
+  }
+
+  public uint8_t get() {
+    return value;
+  }
+
+  public void set(uint8_t new_value) {
+    value = new_value;
+  }
+
+  public uint8_t get(uint8_t new_value) {
+    uint8_t old_value = value;
+    value = new_value;
+    return old_value;
+  }
+}
+
+module test_module_always implements test_interface (
+  input logic clk
+) {
+  private uint8_t value;
+
+  always @(posedge clk) {
+    if (reset().call) {
+      value <= 0;
+      reset()#return <= 1;
+
+    } else if (set(uint8_t)#call) {
+      value <= set(uint8_t)#new_value;
+      set(uint8_t)#return <= 1;
+
+    } else if (get(uint8_t)#call) {
+      value <= get(uint8_t)#new_value;
+      get(uint8_t)#return <= value;
+
+    }
+
+    if (get()#call) {
+      get()#return <= value;
+    }
+  }
+}
