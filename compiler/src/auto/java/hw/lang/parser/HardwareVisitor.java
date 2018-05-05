@@ -31,6 +31,18 @@ public interface HardwareVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModuleDef(HardwareParser.ModuleDefContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HardwareParser#paramDeclList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParamDeclList(HardwareParser.ParamDeclListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HardwareParser#paramDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParamDecl(HardwareParser.ParamDeclContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HardwareParser#portDeclList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

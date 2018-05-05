@@ -30,7 +30,19 @@ packageDecl
 ////////////////////////////////////////////////////////////////////////////////
 
 moduleDef
-    : 'module' name=ID portDeclList? moduleBody
+    : 'module' name=ID paramDeclList? portDeclList? moduleBody
+    ;
+
+
+////////////////////////////////////////
+// Parameter List
+
+paramDeclList
+    : '<' params+=paramDecl (',' params+=paramDecl)* '>'
+    ;
+
+paramDecl
+    : dataType ID
     ;
 
 
@@ -42,7 +54,7 @@ portDeclList
     ;
 
 portDecl
-    : portDir dataType packedSize? ID
+    : portDir dataType ID 
     ;
 
 portDir
@@ -52,7 +64,8 @@ portDir
     ;
 
 dataType
-    : 'logic'
+    : 'logic' packedSize?
+    | ID
     ;
 
 packedSize

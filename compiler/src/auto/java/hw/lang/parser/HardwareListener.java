@@ -40,6 +40,26 @@ public interface HardwareListener extends ParseTreeListener {
 	 */
 	void exitModuleDef(HardwareParser.ModuleDefContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HardwareParser#paramDeclList}.
+	 * @param ctx the parse tree
+	 */
+	void enterParamDeclList(HardwareParser.ParamDeclListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HardwareParser#paramDeclList}.
+	 * @param ctx the parse tree
+	 */
+	void exitParamDeclList(HardwareParser.ParamDeclListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HardwareParser#paramDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterParamDecl(HardwareParser.ParamDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HardwareParser#paramDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitParamDecl(HardwareParser.ParamDeclContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HardwareParser#portDeclList}.
 	 * @param ctx the parse tree
 	 */

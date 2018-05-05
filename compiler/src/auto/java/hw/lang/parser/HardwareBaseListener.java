@@ -54,6 +54,30 @@ public class HardwareBaseListener implements HardwareListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParamDeclList(HardwareParser.ParamDeclListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParamDeclList(HardwareParser.ParamDeclListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParamDecl(HardwareParser.ParamDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParamDecl(HardwareParser.ParamDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPortDeclList(HardwareParser.PortDeclListContext ctx) { }
 	/**
 	 * {@inheritDoc}

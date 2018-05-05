@@ -1,0 +1,18 @@
+package hw.lang.syntax;
+
+/*
+ * Basic test for module parameters.
+ */
+module T_Module_Parameters <
+  uint32_t baud_rate,
+  uint32_t num_data_bits,
+  uint32_t num_stop_bits
+> (
+  input   logic clk,
+  input   logic reset,
+  
+  inout   logic data,
+  output  logic oe
+) {
+  // intentionally left empty
+}
