@@ -1,0 +1,8 @@
+package hw.lang.syntax;
+
+/*
+ * Basic test for an empty module with no parameters, no ports, and no body.
+ */
+module T_Module_Empty {
+  // intentionally left empty
+}

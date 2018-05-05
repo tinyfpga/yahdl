@@ -1,3 +1,4 @@
+package hw.lang.semantic;
 
 interface test_interface {
   public void reset();

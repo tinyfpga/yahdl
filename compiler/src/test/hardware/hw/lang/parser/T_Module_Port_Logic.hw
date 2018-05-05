@@ -1,0 +1,14 @@
+package hw.lang.syntax;
+
+/*
+ * Basic test for an empty module with ports and no parameters or body.
+ */
+module T_Module_Port_Logic (
+  input   logic clk,
+  input   logic reset,
+  
+  inout   logic data,
+  output  logic oe
+) {
+  // intentionally left empty
+}

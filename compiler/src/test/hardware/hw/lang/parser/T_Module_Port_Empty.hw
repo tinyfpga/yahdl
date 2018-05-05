@@ -1,0 +1,8 @@
+package hw.lang.syntax;
+
+/*
+ * Basic test for an empty module with empty port list.
+ */
+module T_Module_Port_Empty () {
+  // intentionally left empty
+}

@@ -1,0 +1,10 @@
+package hw.lang.syntax;
+
+/*
+ * Basic test for an empty module with ports and no parameters or body.
+ */
+module T_Module_Port_Vector (
+  input   logic [7:0]   logic_vector
+) {
+  // intentionally left empty
+}
